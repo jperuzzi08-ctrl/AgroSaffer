@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Íconos oscuros en las barras del sistema (modo día) -->
+    <bool name="barras_sistema_claras">true</bool>
+</resources>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="20dp">
+
+    <!-- ================= CABECERA ================= -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/Agro.Texto.TituloPantalla"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Alertas" />
+
+            <TextView
+                android:id="@+id/tvContadorAlertas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sin eventos"
+                android:textColor="@color/sp_tinta_suave"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBorrarHistorial"
+            style="@style/Widget.Agro.Boton.Texto.Peligro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Limpiar"
+            app:icon="@drawable/ic_borrar" />
+    </LinearLayout>
+
+    <!-- Selector de nodo: mismo desplegable con círculos de estado que Inicio -->
+    <Spinner
+        android:id="@+id/spinnerNodoAlertas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_pastilla"
+        android:backgroundTint="@color/sp_menta"
+        android:contentDescription="Filtrar alertas por nodo"
+        android:dropDownVerticalOffset="8dp"
+        android:dropDownWidth="300dp"
+        android:minHeight="44dp"
+        android:popupBackground="@drawable/bg_popup"
+        android:spinnerMode="dropdown"
+        android:visibility="gone" />
+
+    <!-- ================= LISTA / ESTADO VACÍO ================= -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1">
+
+        <ScrollView
+            android:id="@+id/scrollAlertas"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp">
+
+            <LinearLayout
+                android:id="@+id/contenedorAlertas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/layoutVacio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="40dp"
+            android:paddingEnd="40dp"
+            android:paddingBottom="60dp"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="120dp"
+                android:layout_height="120dp">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_circulo"
+                    android:backgroundTint="@color/sp_sol_suave" />
+
+                <ImageView
+                    style="@style/Agro.Insignia"
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    android:layout_gravity="center"
+                    android:padding="18dp"
+                    android:backgroundTint="@color/sp_menta"
+                    android:src="@drawable/ic_hoja"
+                    app:tint="@color/sp_bosque" />
+            </FrameLayout>
+
+            <TextView
+                style="@style/Agro.Texto.Seccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Todo en calma"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvVacioTexto"
+                style="@style/Agro.Texto.Cuerpo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="No se registraron eventos de estrés en el cultivo." />
+        </LinearLayout>
+    </FrameLayout>
+
+    <include layout="@layout/navegacion_inferior" />
+</LinearLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nodo elegido en la tarjeta de Inicio (el círculo ya está en la tarjeta) -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tvNombreNodo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:ellipsize="end"
+    android:fontFamily="sans-serif-medium"
+    android:gravity="center_vertical"
+    android:maxLines="1"
+    android:textColor="@color/sp_tinta"
+    android:textSize="17sp" />

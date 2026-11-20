@@ -1,0 +1,16 @@
+# Solo se suben la app, el código del ESP32 y el modelo 3D.
+# Todo lo demás de esta carpeta (documentos, respaldos, .rar, imágenes) queda afuera.
+/*
+!/.gitignore
+!/README.md
+!/LICENSE
+!/AgroSaffer-App/
+!/esp32-code/
+!/3D model/
+
+# Archivos locales o generados por Android Studio
+AgroSaffer-App/.idea/
+AgroSaffer-App/.kotlin/
+
+# Configuración de Firebase (tiene la clave del proyecto; no se publica)
+AgroSaffer-App/app/google-services.json

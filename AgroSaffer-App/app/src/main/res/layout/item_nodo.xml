@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fila de la lista desplegable de nodos: círculo de estado + nombre + detalle -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="58dp"
+    android:orientation="horizontal"
+    android:paddingStart="18dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="18dp"
+    android:paddingBottom="10dp">
+
+    <View
+        android:id="@+id/puntoNodo"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:background="@drawable/bg_punto_estado"
+        android:backgroundTint="@color/sp_tinta_tenue" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvNombreNodo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:textColor="@color/sp_tinta"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvEstadoNodo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:maxLines="1"
+            android:textColor="@color/sp_tinta_suave"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Paleta SOLARPUNK (modo día) — tierra, sol, hoja y agua.
+        Fondos cálidos tipo pergamino, verdes de bosque y acentos dorados.
+        Los mismos nombres se redefinen en values-night/colors.xml para el modo noche.
+    -->
+
+    <!-- Fondos y superficies -->
+    <color name="sp_amanecer">#FCE3A6</color>
+    <color name="sp_amanecer_medio">#FBF3DC</color>
+    <color name="sp_crema">#FBF6E9</color>
+    <color name="sp_crema_media">#F6F2E2</color>
+    <color name="sp_crema_profunda">#F3ECD9</color>
+    <color name="sp_salvia_fondo">#E5EED8</color>
+    <color name="sp_superficie">#FFFDF6</color>
+    <color name="sp_superficie_variante">#F1EBDA</color>
+    <color name="sp_borde">#E6DECA</color>
+    <color name="sp_contorno">#CDC3A9</color>
+
+    <!-- Cielo del banner -->
+    <color name="sp_banner_cielo_1">#D9EEEF</color>
+    <color name="sp_banner_cielo_2">#EEF4E4</color>
+    <color name="sp_banner_cielo_3">#FBF1D6</color>
+
+    <!-- Verdes (primario) -->
+    <color name="sp_bosque_oscuro">#173A2C</color>
+    <color name="sp_bosque">#24573F</color>
+    <color name="sp_hoja">#3F8F5A</color>
+    <color name="sp_brote">#7DB466</color>
+    <color name="sp_menta">#D6EBCB</color>
+    <color name="sp_marca">#24573F</color>
+
+    <!-- Sol (acento) -->
+    <color name="sp_sol">#F2B33D</color>
+    <color name="sp_sol_oscuro">#A86B08</color>
+    <color name="sp_sol_suave">#FCEBC0</color>
+    <color name="sp_sol_borde">#F3D68C</color>
+    <color name="sp_acento_boton">#F2B33D</color>
+
+    <!-- Tierra / alerta -->
+    <color name="sp_terracota">#C4633A</color>
+    <color name="sp_terracota_oscuro">#9A4626</color>
+    <color name="sp_terracota_suave">#F7DCCB</color>
+    <color name="sp_rojo">#C4362C</color>
+
+    <!-- Agua y cielo -->
+    <color name="sp_cielo">#2F7F96</color>
+    <color name="sp_cielo_oscuro">#1F5F72</color>
+    <color name="sp_cielo_suave">#D5EBF0</color>
+    <color name="sp_agua">#2B8A78</color>
+    <color name="sp_agua_suave">#D2ECE3</color>
+
+    <!-- Glicina (presión atmosférica) -->
+    <color name="sp_glicina">#6F63A3</color>
+    <color name="sp_glicina_suave">#E6E2F3</color>
+
+    <!-- Texto -->
+    <color name="sp_tinta">#1D2A22</color>
+    <color name="sp_tinta_suave">#56645A</color>
+    <color name="sp_tinta_tenue">#7E897D</color>
+
+    <!-- Texto sobre acentos y contenedores (tema Material) -->
+    <color name="sp_sobre_acento">#FFFFFF</color>
+    <color name="sp_sobre_sol_suave">#4A3200</color>
+    <color name="sp_sobre_cielo_suave">#0F3A46</color>
+    <color name="sp_sobre_terracota_suave">#3D1606</color>
+
+    <!--
+        Colores FIJOS (iguales de día y de noche): la tarjeta VPD y el marcador
+        del gráfico son siempre verde bosque oscuro.
+    -->
+    <color name="sp_hero_inicio">#173A2C</color>
+    <color name="sp_hero_fin">#2F7A4F</color>
+    <color name="sp_sobre_bosque">#FBF6E9</color>
+    <color name="sp_sobre_bosque_suave">#BCD6C2</color>
+
+    <!-- Chip de estado del VPD (sobre la tarjeta oscura) -->
+    <color name="estado_optimo_fondo">#D6EBCB</color>
+    <color name="estado_optimo_texto">#24573F</color>
+    <color name="estado_alto_fondo">#F7DCCB</color>
+    <color name="estado_alto_texto">#9A4626</color>
+    <color name="estado_bajo_fondo">#D5EBF0</color>
+    <color name="estado_bajo_texto">#1F5F72</color>
+
+    <!-- Segmentos del medidor VPD -->
+    <color name="sp_gauge_bajo">#8CC7D6</color>
+    <color name="sp_gauge_optimo">#A9DB8C</color>
+    <color name="sp_gauge_alto">#F0A27A</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

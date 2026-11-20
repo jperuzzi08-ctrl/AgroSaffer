@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nodo elegido en Tendencias y Alertas: botón con círculo de estado y flecha -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="44dp"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="8dp">
+
+    <View
+        android:id="@+id/puntoNodo"
+        android:layout_width="11dp"
+        android:layout_height="11dp"
+        android:background="@drawable/bg_punto_estado"
+        android:backgroundTint="@color/sp_tinta_tenue" />
+
+    <TextView
+        android:id="@+id/tvNombreNodo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxWidth="200dp"
+        android:maxLines="1"
+        android:textColor="@color/sp_bosque"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="4dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_expandir"
+        app:tint="@color/sp_bosque" />
+</LinearLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Versión de un solo color para los íconos temáticos de Android 13+ -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Anillo solar -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M35,50a19,19 0,1 1,38 0a19,19 0,1 1,-38 0ZM38.5,50a15.5,15.5 0,1 0,31 0a15.5,15.5 0,1 0,-31 0Z" />
+
+    <!-- Brote: tallo y hojas en trazos separados -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M52.4,70L55.6,70L55.6,50.5C55.6,48.8 52.4,48.8 52.4,50.5Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M54,57C46,58 40,52 39,44C47,44 53,50 54,57Z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M54,51C55,44 60,39 65,39C65,46 60,51 54,51Z" />
+
+    <!-- Horizonte -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M24,73C38,66 70,66 84,73L84,77C70,70 38,70 24,77Z" />
+</vector>

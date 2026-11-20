@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
+
+        <!-- ================= CABECERA ================= -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                style="@style/Agro.Insignia"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:padding="10dp"
+                android:backgroundTint="@color/sp_marca"
+                android:src="@drawable/ic_hoja"
+                app:tint="@color/sp_sol" />
+
+            <TextView
+                style="@style/Agro.Texto.Marca"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:text="@string/app_name" />
+
+            <!-- Conectividad: Wi-Fi = servidor Firebase · barras = nodo enviando datos -->
+            <LinearLayout
+                android:id="@+id/pillConexion"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_pastilla_borde"
+                android:clickable="true"
+                android:contentDescription="Estado de conexión"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:id="@+id/imgWifi"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:contentDescription="Conexión con el servidor"
+                    android:src="@drawable/ic_wifi"
+                    app:tint="@color/sp_tinta_tenue" />
+
+                <ImageView
+                    android:id="@+id/imgLora"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="10dp"
+                    android:contentDescription="Estado del nodo"
+                    android:src="@drawable/ic_lora"
+                    app:tint="@color/sp_tinta_tenue" />
+            </LinearLayout>
+
+            <!-- BOTÓN RÁPIDO DÍA / NOCHE (luna de día, sol de noche) -->
+            <ImageView
+                android:id="@+id/btnModoTema"
+                style="@style/Agro.BotonRedondo"
+                android:layout_marginStart="10dp"
+                android:contentDescription="Cambiar entre modo día y noche"
+                android:src="@drawable/ic_modo_tema" />
+        </LinearLayout>
+
+        <!-- ================= BANNER SALUDO ================= -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Agro.Tarjeta.Ilustracion"
+            android:layout_width="match_parent"
+            android:layout_height="168dp"
+            android:layout_marginTop="18dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_banner_cielo">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:importantForAccessibility="no"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ill_paisaje_solarpunk" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:id="@+id/tvSaludo"
+                        style="@style/Agro.Texto.TituloPantalla"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Buen día" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Así respira tu cultivo hoy"
+                        android:textColor="@color/sp_tinta_suave"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================= SELECTOR DE NODO ================= -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/filaNodo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="68dp"
+                android:orientation="horizontal"
+                android:paddingStart="14dp"
+                android:paddingEnd="10dp">
+
+                <ImageView
+                    style="@style/Agro.Insignia"
+                    android:backgroundTint="@color/sp_menta"
+                    android:src="@drawable/ic_brote"
+                    app:tint="@color/sp_bosque" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Agro.Texto.Overline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Nodo seleccionado"
+                        android:textSize="10sp" />
+
+                    <Spinner
+                        android:id="@+id/spinnerNodos"
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:background="@null"
+                        android:dropDownHorizontalOffset="-66dp"
+                        android:dropDownVerticalOffset="12dp"
+                        android:dropDownWidth="300dp"
+                        android:popupBackground="@drawable/bg_popup" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:id="@+id/puntoEstado"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/bg_punto_estado"
+                        android:backgroundTint="@color/sp_tinta_tenue" />
+
+                    <TextView
+                        android:id="@+id/tvUltimaLectura"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="Sin datos"
+                        android:textColor="@color/sp_tinta_suave"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="6dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_expandir"
+                    app:tint="@color/sp_tinta_suave" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================= INDICADOR PRINCIPAL VPD ================= -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardVPD"
+            style="@style/Widget.Agro.Tarjeta.Hero"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:clickable="true"
+            android:contentDescription="Estrés hídrico VPD. Tocá para ver la tendencia"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_hero_vpd"
+                android:orientation="vertical"
+                android:padding="22dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_hoja"
+                        app:tint="@color/sp_brote" />
+
+                    <TextView
+                        style="@style/Agro.Texto.Overline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="Estrés hídrico · VPD"
+                        android:textColor="@color/sp_sobre_bosque_suave" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvVPD"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:includeFontPadding="false"
+                        android:text="--"
+                        android:textColor="@color/sp_sobre_bosque"
+                        android:textSize="60sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="kPa"
+                        android:textColor="@color/sp_sol"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvEstadoVPD"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_pastilla"
+                    android:backgroundTint="#33FBF6E9"
+                    android:fontFamily="sans-serif-medium"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:paddingTop="6dp"
+                    android:paddingBottom="6dp"
+                    android:text="Esperando lectura…"
+                    android:textColor="@color/sp_sobre_bosque"
+                    android:textSize="12sp" />
+
+                <!-- Medidor: bajo / óptimo / alto -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="22dp"
+                    android:layout_marginTop="22dp">
+
+                    <LinearLayout
+                        android:id="@+id/gaugeTrack"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:id="@+id/gaugeBajo"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="3dp"
+                            android:layout_weight="0.4"
+                            android:background="@drawable/bg_segmento_gauge"
+                            android:backgroundTint="@color/sp_gauge_bajo" />
+
+                        <View
+                            android:id="@+id/gaugeOptimo"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginEnd="3dp"
+                            android:layout_weight="1.1"
+                            android:background="@drawable/bg_segmento_gauge"
+                            android:backgroundTint="@color/sp_gauge_optimo" />
+
+                        <View
+                            android:id="@+id/gaugeAlto"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1.5"
+                            android:background="@drawable/bg_segmento_gauge"
+                            android:backgroundTint="@color/sp_gauge_alto" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/gaugeMarcador"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:background="@drawable/bg_marcador_gauge"
+                        android:visibility="invisible" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvRangoVPD"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Rango ideal 0.4 – 1.5 kPa"
+                        android:textColor="@color/sp_sobre_bosque_suave"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Ver tendencia"
+                        android:textColor="@color/sp_sol"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron"
+                        app:tint="@color/sp_sol" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================= ATMÓSFERA ================= -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_sol"
+                app:tint="@color/sp_sol_oscuro" />
+
+            <TextView
+                style="@style/Agro.Texto.Seccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Atmósfera" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Temperatura del aire -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardTempAire"
+                style="@style/Widget.Agro.Tarjeta.Hoja"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <ImageView
+                        style="@style/Agro.Insignia"
+                        android:backgroundTint="@color/sp_sol_suave"
+                        android:src="@drawable/ic_termometro"
+                        app:tint="@color/sp_sol_oscuro" />
+
+                    <TextView
+                        style="@style/Agro.Texto.Etiqueta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="Temp. del aire" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvTempAire"
+                            style="@style/Agro.Texto.Valor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--" />
+
+                        <TextView
+                            style="@style/Agro.Texto.Unidad"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="°C" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Humedad del aire -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardHumAire"
+                style="@style/Widget.Agro.Tarjeta.Hoja"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <ImageView
+                        style="@style/Agro.Insignia"
+                        android:backgroundTint="@color/sp_cielo_suave"
+                        android:src="@drawable/ic_gota"
+                        app:tint="@color/sp_cielo" />
+
+                    <TextView
+                        style="@style/Agro.Texto.Etiqueta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="Humedad del aire" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvHumAire"
+                            style="@style/Agro.Texto.Valor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--" />
+
+                        <TextView
+                            style="@style/Agro.Texto.Unidad"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="%" />
+                    </LinearLayout>
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/barraHumAire"
+                        style="@style/Agro.BarraHumedad"
+                        android:layout_marginTop="12dp"
+                        app:indicatorColor="@color/sp_cielo"
+                        app:trackColor="@color/sp_cielo_suave" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Presión atmosférica -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardPresion"
+            style="@style/Widget.Agro.Tarjeta.Hoja"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageView
+                    style="@style/Agro.Insignia"
+                    android:backgroundTint="@color/sp_glicina_suave"
+                    android:src="@drawable/ic_presion"
+                    app:tint="@color/sp_glicina" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Agro.Texto.Etiqueta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Presión atmosférica" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Barómetro del nodo"
+                        android:textColor="@color/sp_tinta_tenue"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvPresion"
+                    style="@style/Agro.Texto.Valor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="26sp" />
+
+                <TextView
+                    style="@style/Agro.Texto.Unidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="hPa" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================= SUELO ================= -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_brote"
+                app:tint="@color/sp_hoja" />
+
+            <TextView
+                style="@style/Agro.Texto.Seccion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Suelo y raíz" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Humedad 15 cm -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardHum15"
+                style="@style/Widget.Agro.Tarjeta.Hoja"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <ImageView
+                        style="@style/Agro.Insignia"
+                        android:backgroundTint="@color/sp_agua_suave"
+                        android:src="@drawable/ic_gota"
+                        app:tint="@color/sp_agua" />
+
+                    <TextView
+                        style="@style/Agro.Texto.Etiqueta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="Humedad a 15 cm" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvHum15"
+                            style="@style/Agro.Texto.Valor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--" />
+
+                        <TextView
+                            style="@style/Agro.Texto.Unidad"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="%" />
+                    </LinearLayout>
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/barraHum15"
+                        style="@style/Agro.BarraHumedad"
+                        android:layout_marginTop="12dp"
+                        app:indicatorColor="@color/sp_agua"
+                        app:trackColor="@color/sp_agua_suave" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Humedad 40 cm -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardHum40"
+                style="@style/Widget.Agro.Tarjeta.Hoja"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:focusable="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <ImageView
+                        style="@style/Agro.Insignia"
+                        android:backgroundTint="@color/sp_agua_suave"
+                        android:src="@drawable/ic_gota"
+                        app:tint="@color/sp_agua" />
+
+                    <TextView
+                        style="@style/Agro.Texto.Etiqueta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="Humedad a 40 cm" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvHum40"
+                            style="@style/Agro.Texto.Valor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--" />
+
+                        <TextView
+                            style="@style/Agro.Texto.Unidad"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="%" />
+                    </LinearLayout>
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/barraHum40"
+                        style="@style/Agro.BarraHumedad"
+                        android:layout_marginTop="12dp"
+                        app:indicatorColor="@color/sp_agua"
+                        app:trackColor="@color/sp_agua_suave" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Temperatura del suelo -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardTempSuelo"
+            style="@style/Widget.Agro.Tarjeta.Hoja"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageView
+                    style="@style/Agro.Insignia"
+                    android:backgroundTint="@color/sp_terracota_suave"
+                    android:src="@drawable/ic_termometro"
+                    app:tint="@color/sp_terracota" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Agro.Texto.Etiqueta"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Temperatura del suelo" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Zona radicular"
+                        android:textColor="@color/sp_tinta_tenue"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvTempSuelo"
+                    style="@style/Agro.Texto.Valor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="26sp" />
+
+                <TextView
+                    style="@style/Agro.Texto.Unidad"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="°C" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ================= HISTORIAL DE ALERTAS ================= -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/btnIrHistorial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardBackgroundColor="@color/sp_sol_suave"
+            app:strokeColor="@color/sp_sol_borde">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageView
+                    style="@style/Agro.Insignia"
+                    android:backgroundTint="@color/sp_superficie"
+                    android:src="@drawable/ic_campana"
+                    app:tint="@color/sp_sol_oscuro" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Historial de alertas"
+                        android:textColor="@color/sp_tinta"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Eventos detectados por tus umbrales"
+                        android:textColor="@color/sp_tinta_suave"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron"
+                    app:tint="@color/sp_sol_oscuro" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</ScrollView>
+
+    <include layout="@layout/navegacion_inferior" />
+</LinearLayout>

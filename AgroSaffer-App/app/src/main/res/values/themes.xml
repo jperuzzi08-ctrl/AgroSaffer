@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+        Tema SOLARPUNK: de día luminoso y legible bajo el sol del campo;
+        de noche un jardín oscuro (los colores cambian en values-night/).
+        El modo se elige en Ajustes → Apariencia (ver PreferenciasTema).
+    -->
+    <style name="Theme.AgroSaffer" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/sp_bosque</item>
+        <item name="colorOnPrimary">@color/sp_crema</item>
+        <item name="colorPrimaryContainer">@color/sp_menta</item>
+        <item name="colorOnPrimaryContainer">@color/sp_bosque_oscuro</item>
+
+        <item name="colorSecondary">@color/sp_sol_oscuro</item>
+        <item name="colorOnSecondary">@color/sp_sobre_acento</item>
+        <item name="colorSecondaryContainer">@color/sp_sol_suave</item>
+        <item name="colorOnSecondaryContainer">@color/sp_sobre_sol_suave</item>
+
+        <item name="colorTertiary">@color/sp_cielo</item>
+        <item name="colorOnTertiary">@color/sp_sobre_acento</item>
+        <item name="colorTertiaryContainer">@color/sp_cielo_suave</item>
+        <item name="colorOnTertiaryContainer">@color/sp_sobre_cielo_suave</item>
+
+        <item name="colorError">@color/sp_terracota_oscuro</item>
+        <item name="colorOnError">@color/sp_sobre_acento</item>
+        <item name="colorErrorContainer">@color/sp_terracota_suave</item>
+        <item name="colorOnErrorContainer">@color/sp_sobre_terracota_suave</item>
+
+        <item name="android:colorBackground">@color/sp_crema</item>
+        <item name="colorOnBackground">@color/sp_tinta</item>
+        <item name="colorSurface">@color/sp_superficie</item>
+        <item name="colorOnSurface">@color/sp_tinta</item>
+        <item name="colorSurfaceVariant">@color/sp_superficie_variante</item>
+        <item name="colorOnSurfaceVariant">@color/sp_tinta_suave</item>
+        <item name="colorSurfaceContainerLowest">@color/sp_superficie</item>
+        <item name="colorSurfaceContainerLow">@color/sp_superficie</item>
+        <item name="colorSurfaceContainer">@color/sp_crema</item>
+        <item name="colorSurfaceContainerHigh">@color/sp_crema</item>
+        <item name="colorSurfaceContainerHighest">@color/sp_crema_profunda</item>
+        <item name="colorOutline">@color/sp_contorno</item>
+        <item name="colorOutlineVariant">@color/sp_borde</item>
+
+        <item name="android:windowBackground">@drawable/bg_pantalla</item>
+        <item name="android:statusBarColor">@color/sp_crema</item>
+        <item name="android:windowLightStatusBar">@bool/barras_sistema_claras</item>
+        <item name="android:navigationBarColor">@color/sp_superficie</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/barras_sistema_claras</item>
+
+        <item name="textInputStyle">@style/Widget.Agro.TextInput</item>
+        <item name="materialButtonStyle">@style/Widget.Agro.Boton</item>
+        <item name="materialCardViewStyle">@style/Widget.Agro.Tarjeta</item>
+        <item name="chipStyle">@style/Widget.Agro.Chip</item>
+    </style>
+
+    <!-- ============ Formas ============ -->
+
+    <style name="ShapeAppearance.Agro.Tarjeta" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">22dp</item>
+    </style>
+
+    <!-- Esquinas asimétricas, como una hoja -->
+    <style name="ShapeAppearance.Agro.Hoja" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">28dp</item>
+        <item name="cornerSizeBottomRight">28dp</item>
+        <item name="cornerSizeTopRight">10dp</item>
+        <item name="cornerSizeBottomLeft">10dp</item>
+    </style>
+
+    <!--
+        Esquinas uniformes: las tarjetas con fondo de color o ilustración
+        necesitan recortar su contenido, y Android < 13 solo recorta
+        rectángulos redondeados uniformes.
+    -->
+    <style name="ShapeAppearance.Agro.Hero" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
+    </style>
+
+    <style name="ShapeAppearance.Agro.Pastilla" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- ============ Tarjetas ============ -->
+
+    <style name="Widget.Agro.Tarjeta" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardBackgroundColor">@color/sp_superficie</item>
+        <item name="strokeColor">@color/sp_borde</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="rippleColor">#1F3F8F5A</item>
+        <item name="cardPreventCornerOverlap">false</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Agro.Tarjeta</item>
+    </style>
+
+    <style name="Widget.Agro.Tarjeta.Hoja">
+        <item name="shapeAppearance">@style/ShapeAppearance.Agro.Hoja</item>
+    </style>
+
+    <style name="Widget.Agro.Tarjeta.Ilustracion">
+        <item name="strokeWidth">0dp</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Agro.Hero</item>
+    </style>
+
+    <style name="Widget.Agro.Tarjeta.Hero">
+        <item name="cardBackgroundColor">@color/sp_hero_inicio</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="rippleColor">#33FBF6E9</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Agro.Hero</item>
+    </style>
+
+    <!-- ============ Botones ============ -->
+
+    <style name="Widget.Agro.Boton" parent="Widget.Material3.Button">
+        <item name="android:minHeight">56dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Agro.Pastilla</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">10dp</item>
+    </style>
+
+    <style name="Widget.Agro.Boton.Contorno" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">56dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Agro.Pastilla</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">10dp</item>
+    </style>
+
+    <style name="Widget.Agro.Boton.Contorno.Peligro">
+        <item name="android:textColor">@color/sp_terracota_oscuro</item>
+        <item name="iconTint">@color/sp_terracota_oscuro</item>
+        <item name="strokeColor">@color/sp_terracota</item>
+        <item name="rippleColor">#26C4633A</item>
+    </style>
+
+    <style name="Widget.Agro.Boton.Texto.Peligro" parent="Widget.Material3.Button.TextButton.Icon">
+        <item name="android:textColor">@color/selector_texto_peligro</item>
+        <item name="iconTint">@color/selector_texto_peligro</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="rippleColor">#26C4633A</item>
+    </style>
+
+    <!-- ============ Campos de texto ============ -->
+
+    <style name="Widget.Agro.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/sp_superficie</item>
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="boxStrokeColor">@color/sp_hoja</item>
+        <item name="hintTextColor">@color/sp_hoja</item>
+        <item name="startIconTint">@color/sp_tinta_suave</item>
+        <item name="endIconTint">@color/sp_tinta_suave</item>
+        <item name="suffixTextColor">@color/sp_tinta_suave</item>
+        <item name="helperTextTextColor">@color/sp_tinta_suave</item>
+    </style>
+
+    <!-- ============ Chips de rango ============ -->
+
+    <style name="Widget.Agro.Chip" parent="Widget.Material3.Chip.Filter">
+        <item name="chipBackgroundColor">@color/selector_chip_fondo</item>
+        <item name="android:textColor">@color/selector_chip_texto</item>
+        <item name="chipStrokeColor">@color/selector_chip_borde</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="chipMinHeight">38dp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Agro.Pastilla</item>
+        <item name="rippleColor">#263F8F5A</item>
+    </style>
+
+    <!-- ============ Tipografía ============ -->
+
+    <style name="Agro.Texto" parent="">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/sp_tinta</item>
+    </style>
+
+    <style name="Agro.Texto.Marca">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/sp_bosque</item>
+    </style>
+
+    <style name="Agro.Texto.TituloPantalla">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/sp_bosque</item>
+    </style>
+
+    <style name="Agro.Texto.Seccion">
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/sp_tinta</item>
+    </style>
+
+    <style name="Agro.Texto.Overline">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:letterSpacing">0.12</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/sp_tinta_suave</item>
+    </style>
+
+    <style name="Agro.Texto.Etiqueta">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/sp_tinta_suave</item>
+    </style>
+
+    <style name="Agro.Texto.Cuerpo">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">3dp</item>
+        <item name="android:textColor">@color/sp_tinta_suave</item>
+    </style>
+
+    <style name="Agro.Texto.Valor">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/sp_tinta</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Agro.Texto.Unidad">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/sp_tinta_suave</item>
+    </style>
+
+    <!-- ============ Piezas reutilizables ============ -->
+
+    <!-- Insignia circular con icono -->
+    <style name="Agro.Insignia" parent="">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">9dp</item>
+        <item name="android:background">@drawable/bg_circulo</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <!-- Botón redondo de cabecera (volver, ajustes) -->
+    <style name="Agro.BotonRedondo" parent="">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@drawable/bg_boton_redondo</item>
+        <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="tint">@color/sp_bosque</item>
+    </style>
+
+    <!-- Barra de humedad -->
+    <style name="Agro.BarraHumedad" parent="Widget.Material3.LinearProgressIndicator">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:max">100</item>
+        <item name="trackThickness">6dp</item>
+        <item name="trackCornerRadius">3dp</item>
+    </style>
+
+    <!-- Selector de apariencia (Claro / Noche / Auto) -->
+    <style name="Widget.Agro.Boton.Segmento" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingStart">6dp</item>
+        <item name="android:paddingEnd">6dp</item>
+        <item name="android:textColor">@color/selector_segmento_texto</item>
+        <item name="backgroundTint">@color/selector_segmento_fondo</item>
+        <item name="iconTint">@color/selector_segmento_texto</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">6dp</item>
+        <item name="iconSize">18dp</item>
+        <item name="strokeColor">@color/sp_contorno</item>
+        <item name="rippleColor">#263F8F5A</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Agro.Pastilla</item>
+    </style>
+
+    <!-- Barra de navegación inferior: solo íconos, estilo Instagram -->
+    <style name="Widget.Agro.NavInferior" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">@color/sp_superficie</item>
+        <item name="itemIconTint">@color/selector_nav_icono</item>
+        <item name="itemIconSize">26dp</item>
+        <item name="labelVisibilityMode">unlabeled</item>
+        <item name="itemActiveIndicatorStyle">@null</item>
+        <item name="itemRippleColor">#263F8F5A</item>
+        <item name="elevation">0dp</item>
+        <item name="android:minHeight">56dp</item>
+    </style>
+</resources>

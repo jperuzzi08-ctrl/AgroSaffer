@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="315"
+                android:startColor="@color/sp_hero_inicio"
+                android:endColor="@color/sp_hero_fin"
+                android:type="linear" />
+        </shape>
+    </item>
+    <!-- halo exterior -->
+    <item
+        android:width="210dp"
+        android:height="210dp"
+        android:gravity="top|end"
+        android:right="-80dp"
+        android:top="-90dp">
+        <shape android:shape="oval">
+            <solid android:color="#14F2B33D" />
+        </shape>
+    </item>
+    <!-- halo interior -->
+    <item
+        android:width="140dp"
+        android:height="140dp"
+        android:gravity="top|end"
+        android:right="-45dp"
+        android:top="-55dp">
+        <shape android:shape="oval">
+            <solid android:color="#26F2B33D" />
+        </shape>
+    </item>
+    <!-- sol -->
+    <item
+        android:width="80dp"
+        android:height="80dp"
+        android:gravity="top|end"
+        android:right="-15dp"
+        android:top="-25dp">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="315"
+                android:startColor="#FFD77A"
+                android:endColor="@color/sp_sol"
+                android:type="linear" />
+        </shape>
+    </item>
+</layer-list>

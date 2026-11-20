@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Paleta SOLARPUNK (modo noche) — jardín nocturno: bosque profundo,
+        luciérnagas y luz de luna. Solo se redefinen los colores que cambian;
+        los fijos (tarjeta VPD, medidor, chips de estado) siguen en values/.
+    -->
+
+    <!-- Fondos y superficies -->
+    <color name="sp_amanecer">#1A2236</color>
+    <color name="sp_amanecer_medio">#141D24</color>
+    <color name="sp_crema">#0F1712</color>
+    <color name="sp_crema_media">#111A14</color>
+    <color name="sp_crema_profunda">#1A251E</color>
+    <color name="sp_salvia_fondo">#0C1410</color>
+    <color name="sp_superficie">#18221B</color>
+    <color name="sp_superficie_variante">#223029</color>
+    <color name="sp_borde">#283629</color>
+    <color name="sp_contorno">#3E4E42</color>
+
+    <!-- Cielo nocturno del banner -->
+    <color name="sp_banner_cielo_1">#142038</color>
+    <color name="sp_banner_cielo_2">#15222A</color>
+    <color name="sp_banner_cielo_3">#18241D</color>
+
+    <!-- Verdes (primario) -->
+    <color name="sp_bosque_oscuro">#D3EBD6</color>
+    <color name="sp_bosque">#9FD8A9</color>
+    <color name="sp_hoja">#6CC08A</color>
+    <color name="sp_brote">#9CCB7E</color>
+    <color name="sp_menta">#1E3A2A</color>
+    <color name="sp_marca">#2F7A4F</color>
+
+    <!-- Sol (acento) -->
+    <color name="sp_sol">#F5C25A</color>
+    <color name="sp_sol_oscuro">#F2C46A</color>
+    <color name="sp_sol_suave">#3A3018</color>
+    <color name="sp_sol_borde">#4E4020</color>
+    <color name="sp_acento_boton">#173A2C</color>
+
+    <!-- Tierra / alerta -->
+    <color name="sp_terracota">#EC9A74</color>
+    <color name="sp_terracota_oscuro">#F4AE8C</color>
+    <color name="sp_terracota_suave">#3E251A</color>
+    <color name="sp_rojo">#F0897C</color>
+
+    <!-- Agua y cielo -->
+    <color name="sp_cielo">#78C1D5</color>
+    <color name="sp_cielo_oscuro">#A3D6E3</color>
+    <color name="sp_cielo_suave">#16303A</color>
+    <color name="sp_agua">#63C7B1</color>
+    <color name="sp_agua_suave">#15322B</color>
+
+    <!-- Glicina -->
+    <color name="sp_glicina">#B3A9E3</color>
+    <color name="sp_glicina_suave">#29253F</color>
+
+    <!-- Texto -->
+    <color name="sp_tinta">#E7EFE4</color>
+    <color name="sp_tinta_suave">#A9B8AB</color>
+    <color name="sp_tinta_tenue">#7D8C80</color>
+
+    <!-- Texto sobre acentos y contenedores -->
+    <color name="sp_sobre_acento">#11170F</color>
+    <color name="sp_sobre_sol_suave">#FCE7B2</color>
+    <color name="sp_sobre_cielo_suave">#CDEAF1</color>
+    <color name="sp_sobre_terracota_suave">#F9D9C9</color>
+</resources>
