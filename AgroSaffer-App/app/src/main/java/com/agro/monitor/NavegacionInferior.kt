@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationBarMenuView
 
 /**
  * Barra inferior compartida por las secciones principales.
@@ -20,7 +19,6 @@ object NavegacionInferior {
         val nav = activity.findViewById<BottomNavigationView>(R.id.navInferior) ?: return
 
         nav.selectedItemId = seccionActual
-        destacarInicio(nav)
 
         nav.setOnItemSelectedListener { item ->
             val destino: Class<*>? = when (item.itemId) {
@@ -51,17 +49,5 @@ object NavegacionInferior {
 
         // Tocar la sección en la que ya estás no hace nada
         nav.setOnItemReselectedListener { }
-    }
-
-    /**
-     * El ícono de Inicio tiene colores propios (círculo verde + casa negra).
-     * BottomNavigationView tiñe todos los íconos con itemIconTint, así que a
-     * este en particular se le quita el tinte después de inflar el menú.
-     */
-    private fun destacarInicio(nav: BottomNavigationView) {
-        nav.post {
-            val menuView = nav.getMenuView() as? NavigationBarMenuView ?: return@post
-            menuView.findItemView(R.id.nav_inicio)?.setIconTintList(null)
-        }
     }
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Carpetas que la app puede compartir con otras apps (Excel exportado, Android 9 o anterior) -->
+<paths>
+    <external-files-path name="exportaciones" path="Documents/AgroSaffer/" />
+    <files-path name="exportaciones_internas" path="AgroSaffer/" />
+</paths>

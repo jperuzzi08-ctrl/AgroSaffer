@@ -41,6 +41,9 @@ class ResumenActivity : AppCompatActivity() {
     private var snapshotLecturas: DataSnapshot? = null
     private var umbrales = UmbralesAgronomicos()
 
+    // Hasta que lleguen los umbrales no se generan alertas (evita avisos a medias)
+    private var configCargada = false
+
     private lateinit var contenedorNodos: LinearLayout
     private lateinit var layoutVacio: View
     private lateinit var tvCantidadNodos: TextView
@@ -91,6 +94,8 @@ class ResumenActivity : AppCompatActivity() {
         configListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 umbrales = UmbralesAgronomicos.desde(snapshot)
+                configCargada = true
+                procesarAlertasDeTodos()
                 renderizar()
             }
 
@@ -109,6 +114,7 @@ class ResumenActivity : AppCompatActivity() {
                         snapshot.children.mapNotNull { it.key }
                     )
                 }
+                procesarAlertasDeTodos()
                 renderizar()
             }
 
@@ -130,6 +136,8 @@ class ResumenActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // El saludo del banner cambia con la hora del día
+        findViewById<TextView>(R.id.tvSaludo).text = saludoSegunHora()
         // Al volver de editar un subtítulo, la tarjeta se actualiza.
         renderizar()
     }
@@ -146,6 +154,28 @@ class ResumenActivity : AppCompatActivity() {
         manejador.removeCallbacksAndMessages(null)
     }
 
+    // ===================== Alertas =====================
+
+    /**
+     * Genera las alertas de TODOS los nodos (no solo del que esté abierto), así la
+     * notificación y el historial avisan aunque te quedes en esta pantalla.
+     * Solo suenan las alertas nuevas: volver a procesar la misma lectura no repite nada.
+     */
+    private fun procesarAlertasDeTodos() {
+        val snapshot = snapshotLecturas ?: return
+        if (!configCargada) return
+
+        var nuevas = 0
+        for (nodo in snapshot.children) {
+            val id = nodo.key ?: continue
+            val ultima = Lecturas.ultima(nodo) ?: continue
+            val alertas = EvaluadorAlertas.evaluar(id, LecturaData.desde(ultima), umbrales)
+            // Lecturas sin fecha: se muestran, pero no se anuncian desde acá
+            nuevas += AlertasActivas.procesarNodo(this, id, alertas, Lecturas.millis(ultima))
+        }
+        AlertasActivas.actualizarNotificacion(this, hayNuevas = nuevas > 0)
+    }
+
     // ===================== Tarjetas =====================
 
     private fun renderizar() {
@@ -159,7 +189,8 @@ class ResumenActivity : AppCompatActivity() {
                     umbrales
                 )
             }
-            .sortedBy { it.info.id }
+            // Primero los que necesitan atención, después por nombre
+            .sortedWith(compareByDescending<NodoResumen> { it.hayProblema }.thenBy { it.info.id })
 
         val enLinea = nodos.count { it.info.estado == EstadoNodo.EN_LINEA }
         val conProblema = nodos.count { it.hayProblema }
@@ -193,6 +224,8 @@ class ResumenActivity : AppCompatActivity() {
             color(if (conProblema == 0) R.color.sp_bosque_oscuro else R.color.sp_terracota_oscuro)
         )
 
+        mostrarPromedio(nodos)
+
         contenedorNodos.removeAllViews()
         layoutVacio.visibility = if (nodos.isEmpty()) View.VISIBLE else View.GONE
 
@@ -202,6 +235,37 @@ class ResumenActivity : AppCompatActivity() {
                 as MaterialCardView
             enlazarTarjeta(tarjeta, nodo)
             contenedorNodos.addView(tarjeta)
+        }
+    }
+
+    /** Tarjeta "Promedio del campo": promedio de las últimas mediciones de todos los nodos. */
+    private fun mostrarPromedio(nodos: List<NodoResumen>) {
+        val tarjeta = findViewById<View>(R.id.cardPromedio)
+        val promedio = PromedioCampo.calcular(nodos)
+        if (promedio == null) {
+            tarjeta.visibility = View.GONE
+            return
+        }
+        tarjeta.visibility = View.VISIBLE
+
+        fun formato(patron: String, valor: Double) = String.format(Locale.getDefault(), patron, valor)
+        findViewById<TextView>(R.id.tvPromVpd).text = formato("%.2f", promedio.vpd)
+        findViewById<TextView>(R.id.tvPromTempAire).text = formato("%.1f", promedio.tempAire)
+        findViewById<TextView>(R.id.tvPromHumAire).text = formato("%.0f", promedio.humAire)
+        findViewById<TextView>(R.id.tvPromHum15).text = formato("%.0f", promedio.hum15)
+        findViewById<TextView>(R.id.tvPromHum40).text = formato("%.0f", promedio.hum40)
+        findViewById<TextView>(R.id.tvPromTempSuelo).text = formato("%.1f", promedio.tempSuelo)
+
+        val incluidos = if (promedio.nodosIncluidos == 1) "1 nodo" else "${promedio.nodosIncluidos} nodos"
+        findViewById<TextView>(R.id.tvPromedioDetalle).text = when {
+            promedio.soloDatosViejos ->
+                "Ningún nodo envió datos en la última hora · últimas lecturas de $incluidos"
+            promedio.nodosSinDatosRecientes == 0 ->
+                "Últimas lecturas de $incluidos"
+            promedio.nodosSinDatosRecientes == 1 ->
+                "Últimas lecturas de $incluidos · no incluye 1 sin datos recientes"
+            else ->
+                "Últimas lecturas de $incluidos · no incluye ${promedio.nodosSinDatosRecientes} sin datos recientes"
         }
     }
 

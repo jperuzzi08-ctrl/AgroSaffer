@@ -1,7 +1,14 @@
 package com.agro.monitor
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.FileProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.lang.ref.WeakReference
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
@@ -46,6 +53,8 @@ object ExportadorExcel {
         avisar(context, "Generando Excel con todos los datos…")
 
         val appContext = context.applicationContext
+        // Para mostrar el diálogo final en la pantalla que pidió la exportación
+        val pantalla = WeakReference<Activity>(context as? Activity)
         dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (!snapshot.exists()) {
@@ -62,8 +71,8 @@ object ExportadorExcel {
                     try {
                         val bytes = construirXlsx(snapshot, subtitulos)
                         val nombre = "AgroSaffer_Datos_${fechaArchivo()}.xlsx"
-                        val ruta = guardar(appContext, bytes, nombre)
-                        avisar(appContext, "Excel guardado en $ruta")
+                        val guardado = guardar(appContext, bytes, nombre)
+                        mostrarListo(pantalla, appContext, guardado)
                     } catch (e: Exception) {
                         avisar(appContext, "No se pudo crear el Excel: ${e.message}")
                     } finally {
@@ -328,7 +337,10 @@ object ExportadorExcel {
 
     // ===================== Guardado =====================
 
-    private fun guardar(context: Context, bytes: ByteArray, nombre: String): String {
+    /** Dónde quedó el archivo: texto para mostrar y Uri para compartirlo o abrirlo. */
+    private class Guardado(val ruta: String, val uri: Uri)
+
+    private fun guardar(context: Context, bytes: ByteArray, nombre: String): Guardado {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val resolver = context.contentResolver
             val valores = ContentValues().apply {
@@ -352,7 +364,7 @@ object ExportadorExcel {
             valores.clear()
             valores.put(MediaStore.MediaColumns.IS_PENDING, 0)
             resolver.update(uri, valores, null, null)
-            return "Descargas/$CARPETA_DESCARGAS/$nombre"
+            return Guardado("Descargas/$CARPETA_DESCARGAS/$nombre", uri)
         }
 
         val base = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) ?: context.filesDir
@@ -362,7 +374,56 @@ object ExportadorExcel {
         }
         val archivo = File(carpeta, nombre)
         archivo.writeBytes(bytes)
-        return archivo.absolutePath
+        // FileProvider permite pasarle el archivo a otras apps (Android 9 o anterior)
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.archivos", archivo)
+        return Guardado(archivo.absolutePath, uri)
+    }
+
+    /**
+     * Avisa que el Excel está listo y ofrece compartirlo (WhatsApp, Drive, correo…)
+     * o abrirlo. Si la pantalla ya se cerró, alcanza con un aviso.
+     */
+    private fun mostrarListo(pantalla: WeakReference<Activity>, appContext: Context, guardado: Guardado) {
+        Handler(Looper.getMainLooper()).post {
+            val activity = pantalla.get()
+            if (activity == null || activity.isFinishing || activity.isDestroyed) {
+                Toast.makeText(appContext, "Excel guardado en ${guardado.ruta}", Toast.LENGTH_LONG).show()
+                return@post
+            }
+            MaterialAlertDialogBuilder(activity)
+                .setTitle("Excel listo 🌱")
+                .setMessage("Se guardó en ${guardado.ruta}")
+                .setPositiveButton("Compartir") { _, _ -> compartir(activity, guardado.uri) }
+                .setNeutralButton("Abrir") { _, _ -> abrir(activity, guardado.uri) }
+                .setNegativeButton("Cerrar", null)
+                .show()
+        }
+    }
+
+    private fun compartir(activity: Activity, uri: Uri) {
+        val envio = Intent(Intent.ACTION_SEND).apply {
+            type = MIME_XLSX
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_SUBJECT, "Datos de AgroSaffer")
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        activity.startActivity(Intent.createChooser(envio, "Compartir Excel"))
+    }
+
+    private fun abrir(activity: Activity, uri: Uri) {
+        val ver = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, MIME_XLSX)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        try {
+            activity.startActivity(ver)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(
+                activity,
+                "No hay una app para abrir Excel. Probá con Compartir.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     private fun avisar(context: Context, mensaje: String) {

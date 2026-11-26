@@ -10,6 +10,9 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.core.content.ContextCompat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /** Una condición fuera de rango en un nodo (golpe de calor, helada, etc.). */
 data class AlertaActiva(
@@ -119,6 +122,33 @@ object AlertasActivas {
             .filter { alerta -> vistos[alerta.tipo].let { it == null || momento > it } }
             .associate { it.tipo to momento }
         return nuevas to actualizados
+    }
+
+    /**
+     * Registra las alertas de la última lectura de [nodo] y guarda en el historial
+     * las que son nuevas. No toca la notificación: al terminar con todos los nodos,
+     * llamar una sola vez a [actualizarNotificacion].
+     *
+     * La usan el panel de un nodo y el resumen de todos los nodos. Como una alerta
+     * solo es "nueva" una vez por lectura, procesar la misma lectura desde las dos
+     * pantallas no la duplica.
+     *
+     * @return cuántas alertas nuevas aparecieron
+     */
+    fun procesarNodo(ctx: Context, nodo: String, alertas: List<AlertaActiva>, momento: Long?): Int {
+        val nuevas = registrar(ctx, nodo, alertas, momento)
+        if (nuevas.isNotEmpty()) registrarEnHistorial(ctx, nuevas)
+        return nuevas.size
+    }
+
+    /** Guarda los eventos en la pestaña Alertas (mismo formato de siempre). */
+    private fun registrarEnHistorial(ctx: Context, alertas: List<AlertaActiva>) {
+        val prefs = Cuentas.prefs(ctx, Cuentas.PREFS_HISTORIAL)
+        val previo = prefs.getString("lista_alertas", "").orEmpty()
+        val fechaHora = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(Date())
+        val nuevas = alertas.joinToString("|") { "⚠️ [$fechaHora] ${it.titulo}: ${it.mensaje}" }
+        val historial = if (previo.isEmpty()) nuevas else "$previo|$nuevas"
+        prefs.edit().putString("lista_alertas", historial).apply()
     }
 
     /** Alertas activas guardadas, por nodo. */

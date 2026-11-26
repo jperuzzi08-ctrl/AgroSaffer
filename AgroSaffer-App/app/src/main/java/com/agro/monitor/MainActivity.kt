@@ -201,13 +201,6 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.cardTempSuelo).setOnClickListener { abrirDetalleGrafico("tempSuelo", "Temperatura del suelo") }
     }
 
-    private fun saludoSegunHora(): String {
-        return when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-            in 5..11 -> "Buen día"
-            in 12..19 -> "Buenas tardes"
-            else -> "Buenas noches"
-        }
-    }
 
     private fun solicitarPermisoNotificaciones() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -587,32 +580,9 @@ class MainActivity : AppCompatActivity() {
      * actualizan la notificación en silencio, y las que se resuelven desaparecen de ella.
      */
     private fun procesarAlertas(idNodo: String, data: LecturaData, momento: Long?) {
-        val activas = evaluarAlertas(idNodo, data)
-        val nuevas = AlertasActivas.registrar(this, idNodo, activas, momento)
-        nuevas.forEach { registrarEnHistorial(it) }
-        AlertasActivas.actualizarNotificacion(this, hayNuevas = nuevas.isNotEmpty())
-    }
-
-    /** Condiciones fuera de rango de una lectura (sin efectos: no notifica ni guarda). */
-    private fun evaluarAlertas(idNodo: String, data: LecturaData): List<AlertaActiva> =
-        EvaluadorAlertas.evaluar(idNodo, data, umbrales)
-
-    /** Guarda el evento en la pestaña Alertas (mismo formato de siempre). */
-    private fun registrarEnHistorial(alerta: AlertaActiva) {
-        val prefs = Cuentas.prefs(this, Cuentas.PREFS_HISTORIAL)
-        val historialPrevio = prefs.getString("lista_alertas", "") ?: ""
-
-        val formatoFecha = SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault())
-        val fechaHora = formatoFecha.format(Date())
-        val nuevaEntrada = "⚠️ [$fechaHora] ${alerta.titulo}: ${alerta.mensaje}"
-
-        val historialNuevo = if (historialPrevio.isEmpty()) {
-            nuevaEntrada
-        } else {
-            "$historialPrevio|$nuevaEntrada"
-        }
-
-        prefs.edit().putString("lista_alertas", historialNuevo).apply()
+        val activas = EvaluadorAlertas.evaluar(idNodo, data, umbrales)
+        val nuevas = AlertasActivas.procesarNodo(this, idNodo, activas, momento)
+        AlertasActivas.actualizarNotificacion(this, hayNuevas = nuevas > 0)
     }
 
     private fun abrirDetalleGrafico(variable: String, titulo: String) {
