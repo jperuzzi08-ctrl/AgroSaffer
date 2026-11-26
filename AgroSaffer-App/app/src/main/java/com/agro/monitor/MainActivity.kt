@@ -43,11 +43,14 @@ class MainActivity : AppCompatActivity() {
     private var nodosListener: ValueEventListener? = null
 
     private var nodoSeleccionadoActual: String? = null
+    private var nodoPedido: String? = null
     private val listaNodosActual = mutableListOf<String>()
     private lateinit var adaptadorNodos: AdaptadorNodos
 
     // Vistas principales
     private lateinit var spinnerNodos: Spinner
+    private lateinit var tvSubtituloNodo: TextView
+    private lateinit var btnEditarSubtitulo: View
     private lateinit var imgWifi: ImageView
     private lateinit var imgLora: ImageView
 
@@ -94,14 +97,8 @@ class MainActivity : AppCompatActivity() {
     private var configCargada = false
     private var ultimaLecturaEvaluada: Triple<String, LecturaData, Long?>? = null
 
-    // Umbrales agronómicos
-    private var tempMaxConfig: Double? = null
-    private var tempMinConfig: Double? = null
-    private var vpdMaxConfig: Double? = null
-    private var vpdMinConfig: Double? = null
-    private var humSueloMinConfig: Double? = null
-    private var tempRadicularMinConfig: Double? = null
-    private var tempRadicularMaxConfig: Double? = null
+    // Umbrales agronómicos (se cargan de Firebase)
+    private var umbrales = UmbralesAgronomicos()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,9 +111,17 @@ class MainActivity : AppCompatActivity() {
         dbRef = FirebaseDatabase.getInstance().getReference("usuarios").child(uid).child("lecturas")
         configRef = FirebaseDatabase.getInstance().getReference("usuarios").child(uid).child("configuracion")
 
+        // Nodo que se pidió desde el resumen (o el último guardado).
+        nodoPedido = savedInstanceState?.getString(ESTADO_NODO)
+            ?: intent.getStringExtra(EXTRA_NODO_ID)
+
         // Inicialización de componentes XML
         spinnerNodos = findViewById(R.id.spinnerNodos)
-        adaptadorNodos = AdaptadorNodos(this, R.layout.item_nodo_seleccion)
+        adaptadorNodos = AdaptadorNodos(
+            this,
+            R.layout.item_nodo_seleccion,
+            subtituloDe = { PreferenciasApp.subtituloNodo(this, it.id) }
+        )
         spinnerNodos.adapter = adaptadorNodos
         spinnerNodos.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -130,6 +135,9 @@ class MainActivity : AppCompatActivity() {
         }
         imgWifi = findViewById(R.id.imgWifi)
         imgLora = findViewById(R.id.imgLora)
+        tvSubtituloNodo = findViewById(R.id.tvSubtituloNodo)
+        btnEditarSubtitulo = findViewById(R.id.btnEditarSubtitulo)
+        btnEditarSubtitulo.setOnClickListener { editarSubtituloNodo() }
         val btnModoTema = findViewById<View>(R.id.btnModoTema)
 
         tvVPD = findViewById(R.id.tvVPD)
@@ -156,6 +164,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<TextView>(R.id.tvSaludo).text = saludoSegunHora()
         actualizarIndicadorVpd()
+        actualizarSubtitulo()
 
         AlertasActivas.crearCanal(this)
         solicitarPermisoNotificaciones()
@@ -211,15 +220,7 @@ class MainActivity : AppCompatActivity() {
     private fun escucharConfiguracion() {
         configListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    tempMaxConfig = snapshot.child("tempMax").value?.toString()?.toDoubleOrNull()
-                    tempMinConfig = snapshot.child("tempMin").value?.toString()?.toDoubleOrNull()
-                    vpdMaxConfig = snapshot.child("vpdMax").value?.toString()?.toDoubleOrNull()
-                    vpdMinConfig = snapshot.child("vpdMin").value?.toString()?.toDoubleOrNull()
-                    humSueloMinConfig = snapshot.child("humSueloMin").value?.toString()?.toDoubleOrNull()
-                    tempRadicularMinConfig = snapshot.child("tempRadicularMin").value?.toString()?.toDoubleOrNull()
-                    tempRadicularMaxConfig = snapshot.child("tempRadicularMax").value?.toString()?.toDoubleOrNull()
-                }
+                umbrales = UmbralesAgronomicos.desde(snapshot)
                 // Los umbrales definen las zonas del medidor VPD
                 actualizarIndicadorVpd()
 
@@ -239,8 +240,31 @@ class MainActivity : AppCompatActivity() {
 
     private fun seleccionarNodo(nodo: String) {
         nodoSeleccionadoActual = nodo
+        nodoPedido = null
         PreferenciasApp.guardarNodoActual(this, nodo)
+        actualizarSubtitulo()
         escucharUltimaLectura(nodo)
+    }
+
+    private fun actualizarSubtitulo() {
+        val nodo = nodoSeleccionadoActual
+        val subtitulo = nodo?.let { PreferenciasApp.subtituloNodo(this, it) }.orEmpty()
+        tvSubtituloNodo.text = subtitulo
+        tvSubtituloNodo.visibility = if (subtitulo.isBlank()) View.GONE else View.VISIBLE
+        btnEditarSubtitulo.isEnabled = nodo != null
+        btnEditarSubtitulo.alpha = if (nodo != null) 1f else 0.45f
+    }
+
+    private fun editarSubtituloNodo() {
+        val nodo = nodoSeleccionadoActual ?: return
+        Dialogos.editarSubtitulo(
+            this,
+            nodo,
+            PreferenciasApp.subtituloNodo(this, nodo)
+        ) {
+            actualizarSubtitulo()
+            adaptadorNodos.refrescarEstados()
+        }
     }
 
     private fun cargarNodosEnSpinner() {
@@ -266,14 +290,17 @@ class MainActivity : AppCompatActivity() {
 
                     // Recuperar el nodo elegido (también tras cambiar de tema o reabrir la app)
                     val nodoPreferido = nodoSeleccionadoActual
+                        ?: nodoPedido
                         ?: PreferenciasApp.nodoActual(this@MainActivity)
                     val indicePrevio = listaNodosActual.indexOf(nodoPreferido)
-                    if (indicePrevio >= 0 && nodoPreferido == nodoSeleccionadoActual) {
+                    if (indicePrevio >= 0 && nodoPreferido != null) {
                         spinnerNodos.setSelection(indicePrevio, false)
+                        if (nodoSeleccionadoActual != nodoPreferido) {
+                            seleccionarNodo(nodoPreferido)
+                        }
                     } else {
-                        val indice = maxOf(indicePrevio, 0)
-                        spinnerNodos.setSelection(indice, false)
-                        seleccionarNodo(listaNodosActual[indice])
+                        spinnerNodos.setSelection(0, false)
+                        seleccionarNodo(listaNodosActual[0])
                     }
                 } else {
                     Toast.makeText(this@MainActivity, "No hay nodos asignados a esta cuenta", Toast.LENGTH_SHORT).show()
@@ -371,8 +398,8 @@ class MainActivity : AppCompatActivity() {
      * sobre el medidor bajo / óptimo / alto según los umbrales configurados.
      */
     private fun actualizarIndicadorVpd() {
-        val min = (vpdMinConfig ?: VPD_MIN_DEFECTO).coerceAtLeast(0.0)
-        val max = (vpdMaxConfig ?: VPD_MAX_DEFECTO).coerceAtLeast(min + 0.1)
+        val min = (umbrales.vpdMin ?: VPD_MIN_DEFECTO).coerceAtLeast(0.0)
+        val max = (umbrales.vpdMax ?: VPD_MAX_DEFECTO).coerceAtLeast(min + 0.1)
         val escala = maxOf(3.0, max + 0.5)
 
         tvRangoVPD.text = String.format(Locale.getDefault(), "Rango ideal %.1f – %.1f kPa", min, max)
@@ -511,6 +538,12 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Al girar la pantalla o cambiar de tema se conserva el nodo pedido
+        nodoPedido?.let { outState.putString(ESTADO_NODO, it) }
+    }
+
     override fun onStart() {
         super.onStart()
         manejadorEstado.post(refrescoEstado)
@@ -561,57 +594,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     /** Condiciones fuera de rango de una lectura (sin efectos: no notifica ni guarda). */
-    private fun evaluarAlertas(idNodo: String, data: LecturaData): List<AlertaActiva> {
-        val alertas = mutableListOf<AlertaActiva>()
-        fun agregar(tipo: String, titulo: String, mensaje: String) {
-            alertas.add(AlertaActiva(tipo, titulo, mensaje))
-        }
-
-        tempMaxConfig?.let { max ->
-            if (data.tempAire > max) {
-                agregar("CALOR", "🚨 Alerta de Golpe de Calor", "Temp. Aire en $idNodo de ${data.tempAire}°C (> $max°C). Riesgo de aborto de flores.")
-            }
-        }
-        tempMinConfig?.let { min ->
-            if (data.tempAire < min) {
-                agregar("HELADA", "❄️ Alerta Temprana de Helada", "Temp. Aire en $idNodo cayó a ${data.tempAire}°C (< $min°C). Activar protección.")
-            }
-        }
-
-        humSueloMinConfig?.let { minHum ->
-            if (data.hum15 < minHum) {
-                agregar("HUMEDAD_SUELO", "💧 Alerta Humedad Crítica", "Humedad 15cm en $idNodo cayó a ${data.hum15}% (< $minHum%). Riego urgente requerido.")
-            }
-        }
-
-        vpdMaxConfig?.let { maxVpd ->
-            if (data.vpd > maxVpd) {
-                agregar("VPD_ALTO", "☀️ Estrés Hídrico (VPD)", "VPD en $idNodo alcanzó ${data.vpd} kPa (> $maxVpd kPa). Cierre estomático activo.")
-            }
-        }
-
-        vpdMinConfig?.let { minVpd ->
-            if (data.vpd < minVpd && data.humAire > 90.0) {
-                agregar("FUNGICO", "🍄 Alerta Sanitaria Fúngica", "VPD en $idNodo es ${data.vpd} kPa y humedad ${data.humAire}%. Monitorear hongos.")
-            }
-        }
-
-        tempRadicularMinConfig?.let { minRad ->
-            if (data.tempSuelo < minRad) {
-                agregar("RAIZ_FRIA", "🥶 Bloqueo Nutricional", "Temp. de raíz en $idNodo es ${data.tempSuelo}°C (< $minRad°C). Asimilación suspendida.")
-            }
-        }
-        tempRadicularMaxConfig?.let { maxRad ->
-            if (data.tempSuelo > maxRad) {
-                agregar("RAIZ_CALIENTE", "🔥 Calentamiento Radicular", "Temp. de raíz en $idNodo es ${data.tempSuelo}°C (> $maxRad°C). Riesgo de anoxia.")
-            }
-        }
-
-        if (data.bateria in 0.1..3.4) {
-            agregar("BATERIA", "🔋 Alerta de Hardware / Batería", "Tensión en $idNodo bajo nivel crítico (${data.bateria}V). Limpiar panel solar.")
-        }
-        return alertas
-    }
+    private fun evaluarAlertas(idNodo: String, data: LecturaData): List<AlertaActiva> =
+        EvaluadorAlertas.evaluar(idNodo, data, umbrales)
 
     /** Guarda el evento en la pestaña Alertas (mismo formato de siempre). */
     private fun registrarEnHistorial(alerta: AlertaActiva) {
@@ -659,10 +643,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+        /** Nodo que se quiere mostrar al abrir el panel desde el resumen. */
+        const val EXTRA_NODO_ID = "NODO_ID"
+
+        /** Nodo pedido, guardado al recrear la pantalla. */
+        private const val ESTADO_NODO = "nodo_pedido"
+
         // Mismos valores por defecto que usa ConfiguracionActivity al guardar
         private const val VPD_MIN_DEFECTO = 0.4
         private const val VPD_MAX_DEFECTO = 1.5
-
 
         // Plazo para dar por caída la conexión si Firebase nunca la confirma
         private const val PLAZO_VERIFICACION_MS = 8_000L

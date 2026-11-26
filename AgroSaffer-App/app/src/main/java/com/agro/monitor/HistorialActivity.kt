@@ -111,10 +111,15 @@ class HistorialActivity : AppCompatActivity() {
 
     private fun configurarSelectorNodo() {
         spinnerNodo = findViewById(R.id.spinnerNodoAlertas)
-        adaptadorNodos = AdaptadorNodos(this, R.layout.item_nodo_chip) { info ->
-            val cantidad = if (info.esTodos) totalAlertas else alertasPorNodo[info.id] ?: 0
-            textoCantidad(cantidad)
-        }
+        adaptadorNodos = AdaptadorNodos(
+            this,
+            R.layout.item_nodo_chip,
+            detalleExtra = { info ->
+                val cantidad = if (info.esTodos) totalAlertas else alertasPorNodo[info.id] ?: 0
+                textoCantidad(cantidad)
+            },
+            subtituloDe = { PreferenciasApp.subtituloNodo(this, it.id) }
+        )
         spinnerNodo.adapter = adaptadorNodos
         spinnerNodo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

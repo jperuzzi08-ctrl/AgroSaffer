@@ -23,7 +23,8 @@ import androidx.core.content.ContextCompat
 class AdaptadorNodos(
     private val context: Context,
     @LayoutRes private val layoutSeleccion: Int,
-    private val detalleExtra: ((NodoInfo) -> String?)? = null
+    private val detalleExtra: ((NodoInfo) -> String?)? = null,
+    private val subtituloDe: ((NodoInfo) -> String?)? = null
 ) : BaseAdapter() {
 
     private val inflater = LayoutInflater.from(context)
@@ -77,10 +78,11 @@ class AdaptadorNodos(
 
     private fun detalle(info: NodoInfo): String {
         val extra = detalleExtra?.invoke(info)
+        val subtitulo = if (info.esTodos) null else subtituloDe?.invoke(info)?.takeIf { it.isNotBlank() }
         return if (info.esTodos) {
             extra ?: "Todos los nodos de la cuenta"
         } else {
-            listOfNotNull(info.detalle(), extra).joinToString(" · ")
+            listOfNotNull(subtitulo, info.detalle(), extra).joinToString(" · ")
         }
     }
 

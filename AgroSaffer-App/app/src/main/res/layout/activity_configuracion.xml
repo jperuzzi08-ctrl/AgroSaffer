@@ -464,6 +464,76 @@
             android:text="Guardar parámetros"
             app:icon="@drawable/ic_check" />
 
+        <!-- ================= DATOS ================= -->
+        <TextView
+            style="@style/Agro.Texto.Seccion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Datos" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Agro.Tarjeta.Hoja"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:id="@+id/opcionExportarExcel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                android:paddingStart="18dp"
+                android:paddingTop="12dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="12dp">
+
+                <ImageView
+                    style="@style/Agro.Insignia"
+                    android:backgroundTint="@color/sp_menta"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_exportar"
+                    app:tint="@color/sp_bosque" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Exportar a Excel"
+                        android:textColor="@color/sp_tinta"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Todos los nodos y sus lecturas en un archivo .xlsx, guardado en el teléfono."
+                        android:textColor="@color/sp_tinta_suave"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="8dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_chevron"
+                    app:tint="@color/sp_tinta_suave" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- ================= CUENTA (al final) ================= -->
         <TextView
             style="@style/Agro.Texto.Seccion"

@@ -76,22 +76,59 @@ object Lecturas {
     /** Última lectura de un nodo: Firebase entrega los hijos ordenados por clave. */
     fun ultima(nodo: DataSnapshot): DataSnapshot? = nodo.children.lastOrNull()
 
-    /** Momento de la lectura: campo "timestamp" (ms o s), "fecha" o la propia clave. */
+    /**
+     * Momento de la lectura. Acepta:
+     *  - timestamp numérico en milisegundos o en segundos (como suele mandar el nodo),
+     *  - timestamp/fecha como texto ISO o "yyyy-MM-dd HH:mm:ss",
+     *  - la propia clave de Firebase si tiene formato de fecha.
+     */
     fun millis(lectura: DataSnapshot): Long? {
-        lectura.child("timestamp").value?.toString()?.toLongOrNull()?.let { ts ->
-            return if (ts > 100_000_000_000L) ts else ts * 1000
+        parseTimestamp(lectura.child("timestamp").value)?.let { return it }
+        parseFecha(lectura.child("fecha").value?.toString())?.let { return it }
+        parseFecha(lectura.key)?.let { return it }
+        return null
+    }
+
+    private fun parseTimestamp(valor: Any?): Long? {
+        val texto = valor?.toString()?.trim().orEmpty()
+        if (texto.isEmpty()) return null
+        val numero = texto.toDoubleOrNull()
+        if (numero != null) {
+            val entero = numero.toLong()
+            return when {
+                entero > 100_000_000_000L -> entero          // milisegundos
+                entero > 100_000_000L -> entero * 1000L     // segundos
+                else -> null
+            }
         }
-        val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val candidatos = listOfNotNull(lectura.child("fecha").value?.toString(), lectura.key)
-        for (texto in candidatos) {
+        return parseFecha(texto)
+    }
+
+    private fun parseFecha(texto: String?): Long? {
+        val limpio = texto?.trim().orEmpty()
+        if (limpio.isEmpty()) return null
+        for (patron in FORMATOS_FECHA) {
             try {
-                formato.parse(texto)?.let { return it.time }
+                val formato = SimpleDateFormat(patron, Locale.US).apply { isLenient = false }
+                formato.parse(limpio)?.let { return it.time }
             } catch (_: Exception) {
-                // No es una fecha legible; se prueba el siguiente candidato
+                // Se prueba el siguiente formato
             }
         }
         return null
     }
+
+    private val FORMATOS_FECHA = listOf(
+        "yyyy-MM-dd HH:mm:ss",
+        "yyyy-MM-dd HH:mm",
+        "yyyy-MM-dd'T'HH:mm:ss.SSSXXX",
+        "yyyy-MM-dd'T'HH:mm:ssXXX",
+        "yyyy-MM-dd'T'HH:mm:ss.SSS",
+        "yyyy-MM-dd'T'HH:mm:ss",
+        "dd/MM/yyyy HH:mm:ss",
+        "dd/MM/yyyy HH:mm",
+        "yyyy/MM/dd HH:mm:ss"
+    )
 
     fun minutosDesde(millis: Long?): Long? =
         millis?.let { ((System.currentTimeMillis() - it) / 60_000).coerceAtLeast(0) }

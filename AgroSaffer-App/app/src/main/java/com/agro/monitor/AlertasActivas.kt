@@ -236,7 +236,7 @@ object AlertasActivas {
             )
         }
         return TaskStackBuilder.create(ctx)
-            .addNextIntent(Intent(ctx, MainActivity::class.java))
+            .addNextIntent(Intent(ctx, ResumenActivity::class.java))
             .addNextIntent(alertas)
             .getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }

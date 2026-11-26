@@ -40,10 +40,10 @@ class LoginActivity : AppCompatActivity() {
         // 1. Inicialización de Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        // Si ya había una sesión iniciada, pasa directamente a MainActivity
+        // Si ya había una sesión iniciada, pasa directamente al resumen
         auth.currentUser?.let { usuario ->
             Cuentas.recordar(this, usuario)
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, ResumenActivity::class.java))
             finish()
             return
         }
@@ -193,7 +193,7 @@ class LoginActivity : AppCompatActivity() {
                     Cuentas.recordar(this, usuario)
                     Toast.makeText(this, "¡Bienvenido!", Toast.LENGTH_SHORT).show()
 
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    val intent = Intent(this@LoginActivity, ResumenActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {

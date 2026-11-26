@@ -91,7 +91,18 @@ class DetalleGraficoActivity : AppCompatActivity() {
                 handler.postDelayed(this, 10000)
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Se actualiza solo mientras la pantalla está visible
+        handler.removeCallbacks(runnable)
         handler.post(runnable)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        handler.removeCallbacks(runnable)
     }
 
     /**
@@ -100,7 +111,11 @@ class DetalleGraficoActivity : AppCompatActivity() {
      */
     private fun configurarSelectorNodo() {
         spinnerNodo = findViewById(R.id.spinnerNodoGrafico)
-        adaptadorNodos = AdaptadorNodos(this, R.layout.item_nodo_chip)
+        adaptadorNodos = AdaptadorNodos(
+            this,
+            R.layout.item_nodo_chip,
+            subtituloDe = { PreferenciasApp.subtituloNodo(this, it.id) }
+        )
         spinnerNodo.adapter = adaptadorNodos
         spinnerNodo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -255,19 +270,32 @@ class DetalleGraficoActivity : AppCompatActivity() {
 
         dbRef.child(idNodo).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val listaDatos = mutableListOf<HistorialDataMillis>()
                 val ahoraMillis = System.currentTimeMillis()
                 val limiteTiempoMillis = ahoraMillis - (horasFiltro * 3600 * 1000L)
+                val hijos = snapshot.children.toList()
 
-                for (child in snapshot.children) {
-                    val valor = child.child(variableActual).value?.toString()?.toDoubleOrNull() ?: 0.0
-                    val timestampRaw = child.child("timestamp").value?.toString()
-                    val fechaRaw = child.child("fecha").value?.toString() ?: child.key ?: ""
+                // Lecturas con su momento real (acepta segundos, milisegundos o fecha)
+                val conFecha = hijos.mapNotNull { child ->
+                    val valor = child.child(variableActual).value?.toString()?.toDoubleOrNull()
+                        ?: return@mapNotNull null
+                    val millis = Lecturas.millis(child) ?: return@mapNotNull null
+                    HistorialDataMillis(timestamp = millis, valor = valor)
+                }
 
-                    val timeMillis = obtenerTimestampMillis(timestampRaw, fechaRaw)
-
-                    if (timeMillis >= limiteTiempoMillis || horasFiltro >= 8760) {
-                        listaDatos.add(HistorialDataMillis(timestamp = timeMillis, valor = valor))
+                val listaDatos = if (conFecha.isNotEmpty()) {
+                    conFecha.filter {
+                        it.timestamp >= limiteTiempoMillis || horasFiltro >= 8760
+                    }
+                } else {
+                    // Sin ninguna fecha reconocible: se grafican igual, en el orden
+                    // en que llegaron, para no dejar la pantalla vacía.
+                    hijos.mapIndexedNotNull { indice, child ->
+                        val valor = child.child(variableActual).value?.toString()?.toDoubleOrNull()
+                            ?: return@mapIndexedNotNull null
+                        HistorialDataMillis(
+                            timestamp = ahoraMillis - (hijos.size - indice) * 60_000L,
+                            valor = valor
+                        )
                     }
                 }
 
@@ -276,6 +304,8 @@ class DetalleGraficoActivity : AppCompatActivity() {
                     actualizarMetricasCabecera(listaDatos)
                 } else {
                     lineChart.clear()
+                    lineChart.setNoDataText("Sin mediciones en este rango 🌱")
+                    lineChart.invalidate()
                     tvValorActual.text = "--"
                     tvPromedio.text = "--"
                     tvRango.text = "--"
@@ -286,16 +316,6 @@ class DetalleGraficoActivity : AppCompatActivity() {
                 Log.e("DetalleGrafico", "Error al cargar datos: ${error.message}")
             }
         })
-    }
-
-    private fun obtenerTimestampMillis(timestampStr: String?, fechaStr: String): Long {
-        timestampStr?.toLongOrNull()?.let { return it }
-        val sdfEntrada = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        return try {
-            sdfEntrada.parse(fechaStr)?.time ?: System.currentTimeMillis()
-        } catch (e: Exception) {
-            System.currentTimeMillis()
-        }
     }
 
     private fun actualizarMetricasCabecera(lista: List<HistorialDataMillis>) {
@@ -374,6 +394,7 @@ class DetalleGraficoActivity : AppCompatActivity() {
         }
 
         lineChart.apply {
+            notifyDataSetChanged()
             invalidate()
 
             // Si hay más de 4 puntos, limita la ventana visible para permitir deslizar con el dedo
@@ -382,11 +403,16 @@ class DetalleGraficoActivity : AppCompatActivity() {
                 val rangoTotal = entries.last().x - entries.first().x
                 val rangoVisible = (rangoTotal / (entries.size - 1)) * 3.5f
 
-                setVisibleXRangeMaximum(rangoVisible)
-                moveViewToX(entries.last().x) // Se ubica en los datos más recientes
+                if (rangoVisible > 0f) {
+                    setVisibleXRangeMaximum(rangoVisible)
+                    moveViewToX(entries.last().x) // Se ubica en los datos más recientes
+                } else {
+                    fitScreen()
+                }
             } else {
                 fitScreen()
             }
+            invalidate()
         }
     }
 

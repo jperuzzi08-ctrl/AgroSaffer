@@ -6,8 +6,8 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 
 /**
- * Preferencias locales de la app: modo de apariencia (día / noche / automático)
- * (para todo el teléfono) y último nodo elegido (guardado por cuenta).
+ * Preferencias locales de la app: modo de apariencia (día / noche / automático),
+ * último nodo elegido y subtítulos de los nodos (guardados por cuenta).
  */
 object PreferenciasApp {
 
@@ -45,6 +45,28 @@ object PreferenciasApp {
     /** Botón rápido del panel: pasa de día a noche y viceversa. */
     fun alternarTema(ctx: Context) {
         cambiarTema(ctx, if (esNocheActiva(ctx)) TEMA_CLARO else TEMA_NOCHE)
+    }
+
+    // ---------- Subtítulos de los nodos ----------
+    // Se guardan solo en este teléfono, separados por cuenta. No se suben a Firebase.
+
+    private const val CLAVE_SUBTITULO = "subtitulo_nodo__"
+
+    /** Texto corto que el usuario eligió para identificar el nodo (puede estar vacío). */
+    fun subtituloNodo(ctx: Context, nodo: String): String =
+        Cuentas.prefs(ctx, Cuentas.PREFS_CUENTA)
+            .getString(CLAVE_SUBTITULO + nodo, null)
+            .orEmpty()
+
+    /** Guarda el subtítulo; si queda vacío, lo elimina. */
+    fun guardarSubtituloNodo(ctx: Context, nodo: String, subtitulo: String) {
+        val prefs = Cuentas.prefs(ctx, Cuentas.PREFS_CUENTA)
+        val limpio = subtitulo.trim().take(40)
+        if (limpio.isEmpty()) {
+            prefs.edit().remove(CLAVE_SUBTITULO + nodo).apply()
+        } else {
+            prefs.edit().putString(CLAVE_SUBTITULO + nodo, limpio).apply()
+        }
     }
 
     // ---------- Nodo seleccionado ----------

@@ -176,6 +176,17 @@
                         android:dropDownVerticalOffset="12dp"
                         android:dropDownWidth="300dp"
                         android:popupBackground="@drawable/bg_popup" />
+
+                    <TextView
+                        android:id="@+id/tvSubtituloNodo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Subtítulo"
+                        android:textColor="@color/sp_bosque"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -200,6 +211,17 @@
                         android:textColor="@color/sp_tinta_suave"
                         android:textSize="12sp" />
                 </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/btnEditarSubtitulo"
+                    style="@style/Agro.BotonRedondo"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="6dp"
+                    android:contentDescription="Editar subtítulo del nodo"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_editar"
+                    app:tint="@color/sp_tinta_suave" />
 
                 <ImageView
                     android:layout_width="22dp"

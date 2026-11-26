@@ -33,6 +33,10 @@
         </activity>
 
         <activity
+            android:name=".ResumenActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
 

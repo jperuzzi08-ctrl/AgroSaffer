@@ -16,6 +16,7 @@ class ConfiguracionActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var configRef: DatabaseReference
+    private lateinit var lecturasRef: DatabaseReference
 
     private lateinit var etTempMax: EditText
     private lateinit var etTempMin: EditText
@@ -34,6 +35,7 @@ class ConfiguracionActivity : AppCompatActivity() {
         val uid = auth.currentUser?.uid ?: "DdaAJqXxIcadkzamNl16yWyy8k13"
 
         configRef = FirebaseDatabase.getInstance().getReference("usuarios").child(uid).child("configuracion")
+        lecturasRef = FirebaseDatabase.getInstance().getReference("usuarios").child(uid).child("lecturas")
 
         etTempMax = findViewById(R.id.etTempMax)
         etTempMin = findViewById(R.id.etTempMin)
@@ -51,6 +53,10 @@ class ConfiguracionActivity : AppCompatActivity() {
         }
 
         btnGuardarConfig.setOnClickListener { guardarConfiguracion() }
+
+        findViewById<View>(R.id.opcionExportarExcel).setOnClickListener {
+            ExportadorExcel.exportar(this, lecturasRef)
+        }
 
         configurarCuenta()
         configurarSelectorTema()
